@@ -53,12 +53,15 @@ uint16_t ButtonMatrixState[2] = {0};
 uint32_t ButtonMatrixTimestamp = 0;
 
 //LD2State
-//uint8_t LED_On = 0;
+uint8_t LED_On = 0;
 
 //Password
-//uint8_t Password[11] = {0};
+uint16_t Password[12] = {1};
 
 //
+//uint8_t PasswordState = 0 ;
+
+//number of Trick
 uint8_t test =0;
 
 /* USER CODE END PV */
@@ -120,12 +123,55 @@ int main(void)
 	  ButtonMatrixUpdate();
 	  ButtonMatrixState[1] = ButtonMatrixValue ;
 
-	  if ((ButtonMatrixState[0] != 0) && (ButtonMatrixState[1] == 0))
+	  //Trick
+	  if ((ButtonMatrixState[1] != 0) && (ButtonMatrixState[0] == 0))
 	  {
-		  test = test+1 ;
+		  if (test >= 12)
+		  {
+			  Password[test] = ButtonMatrixValue ;
+		  }
+
+		  test = test+1 ; //Trick + 1
+	  }
+
+	  //Clear
+	  if (ButtonMatrixValue == 8)
+	  {
+		  test = -1 ;
+		  Password[0] = 0 ;
+		  Password[11] = 0 ;
+	  }
+
+	  //Check 62340500028ok in 12 Trick
+	  if ((Password[0] == 64)
+			  && (Password[1] == 512)
+			  && (Password[2] == 1024)
+			  && (Password[3] == 16)
+			  && (Password[4] == 4096)
+			  && (Password[5] == 32)
+			  && (Password[6] == 4096)
+			  && (Password[7] == 4096)
+			  && (Password[8] == 4096)
+			  && (Password[9] == 512)
+			  && (Password[10] == 2)
+			  && (Password[11] == 32768)
+			  && (test == 12))
+	  {
+		  LED_On = 1 ;
+	  }
+
+	  if (LED_On == 1)
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
 	  }
 
 	  ButtonMatrixState[0] = ButtonMatrixState[1] ;
+
+
   }
   /* USER CODE END 3 */
 }
@@ -223,16 +269,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LD2_Pin|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7|GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -240,23 +283,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LD2_Pin PA7 PA8 PA9 */
+  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA7 PA9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC7 */
   GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -275,7 +311,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PB6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
