@@ -61,7 +61,7 @@ uint8_t LED_On = 0;
 uint16_t Password[12] = {1};
 
 //
-uint8_t trick = 0;
+//uint8_t trick = 0;
 
 //number of Trick
 uint8_t test =0;
@@ -122,6 +122,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  ButtonMatrixUpdate();
 	  ButtonMatrixState[1] = ButtonMatrixValue ;
 
@@ -144,13 +145,14 @@ int main(void)
 	  //Clear
 	  if (ButtonMatrixValue == 8)
 	  {
-		  test = -1 ;
+		  test = 0 ;
 		  Password[0] = 0 ;
 		  Password[11] = 0 ;
+		  LED_On = 0;
 	  }
 	  else if ((ButtonMatrixValue != 0) && (test <= 12))
 	  {
-		  Password[test] = ButtonMatrixValue ;
+		  Password[test-1] = ButtonMatrixValue ;
 	  }
 
 	  //Check 62340500028ok in 12 Trick
