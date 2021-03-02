@@ -37,11 +37,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  16 .debug_macro  00014701  00000000  00000000  00027450  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   00004fbb  00000000  00000000  0003bb51  2**0
+ 17 .debug_line   00004fb9  00000000  00000000  0003bb51  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    00080ebf  00000000  00000000  00040b0c  2**0
+ 18 .debug_str    00080ec0  00000000  00000000  00040b0a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      0000007b  00000000  00000000  000c19cb  2**0
+ 19 .comment      0000007b  00000000  00000000  000c19ca  2**0
                   CONTENTS, READONLY
  20 .debug_frame  000016dc  00000000  00000000  000c1a48  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -410,25 +410,23 @@ int main(void)
  8000506:	d105      	bne.n	8000514 <main+0x3c>
 	  {
 		  //trick = 1 ;
-		  test = test+1 ; //Trick + 1
+		  trick = trick+1 ; //Trick + 1
  8000508:	4b3f      	ldr	r3, [pc, #252]	; (8000608 <main+0x130>)
  800050a:	781b      	ldrb	r3, [r3, #0]
  800050c:	3301      	adds	r3, #1
  800050e:	b2da      	uxtb	r2, r3
  8000510:	4b3d      	ldr	r3, [pc, #244]	; (8000608 <main+0x130>)
  8000512:	701a      	strb	r2, [r3, #0]
-//	  {
-//		  Password[test-1] = ButtonMatrixValue ;
-//	  }
+	  }
 
-	  //Clear
-	  if (ButtonMatrixValue == 8)
+	  //Button trick
+	  if (ButtonMatrixValue == 8)	//Clear Button is tricking
  8000514:	4b3a      	ldr	r3, [pc, #232]	; (8000600 <main+0x128>)
  8000516:	881b      	ldrh	r3, [r3, #0]
  8000518:	2b08      	cmp	r3, #8
  800051a:	d10c      	bne.n	8000536 <main+0x5e>
 	  {
-		  test = 0 ;
+		  trick = 0 ;
  800051c:	4b3a      	ldr	r3, [pc, #232]	; (8000608 <main+0x130>)
  800051e:	2200      	movs	r2, #0
  8000520:	701a      	strb	r2, [r3, #0]
@@ -446,7 +444,8 @@ int main(void)
  8000532:	701a      	strb	r2, [r3, #0]
  8000534:	e00f      	b.n	8000556 <main+0x7e>
 	  }
-	  else if ((ButtonMatrixValue != 0) && (test <= 12))
+	  //Not Clear Button is tricking and trick = 12
+	  else if ((ButtonMatrixValue != 0) && (trick <= 12))
  8000536:	4b32      	ldr	r3, [pc, #200]	; (8000600 <main+0x128>)
  8000538:	881b      	ldrh	r3, [r3, #0]
  800053a:	2b00      	cmp	r3, #0
@@ -456,7 +455,7 @@ int main(void)
  8000542:	2b0c      	cmp	r3, #12
  8000544:	d807      	bhi.n	8000556 <main+0x7e>
 	  {
-		  Password[test-1] = ButtonMatrixValue ;
+		  Password[trick-1] = ButtonMatrixValue ;
  8000546:	4b30      	ldr	r3, [pc, #192]	; (8000608 <main+0x130>)
  8000548:	781b      	ldrb	r3, [r3, #0]
  800054a:	3b01      	subs	r3, #1
@@ -467,67 +466,67 @@ int main(void)
 	  }
 
 	  //Check 62340500028ok in 12 Trick
-	  if ((Password[0] == 64)
+	  if ((Password[0] == 64)				//6
  8000556:	4b2d      	ldr	r3, [pc, #180]	; (800060c <main+0x134>)
  8000558:	881b      	ldrh	r3, [r3, #0]
  800055a:	2b40      	cmp	r3, #64	; 0x40
  800055c:	d13a      	bne.n	80005d4 <main+0xfc>
-			  && (Password[1] == 512)
+			  && (Password[1] == 512) 		//2
  800055e:	4b2b      	ldr	r3, [pc, #172]	; (800060c <main+0x134>)
  8000560:	885b      	ldrh	r3, [r3, #2]
  8000562:	f5b3 7f00 	cmp.w	r3, #512	; 0x200
  8000566:	d135      	bne.n	80005d4 <main+0xfc>
-			  && (Password[2] == 1024)
+			  && (Password[2] == 1024) 		//3
  8000568:	4b28      	ldr	r3, [pc, #160]	; (800060c <main+0x134>)
  800056a:	889b      	ldrh	r3, [r3, #4]
  800056c:	f5b3 6f80 	cmp.w	r3, #1024	; 0x400
  8000570:	d130      	bne.n	80005d4 <main+0xfc>
-			  && (Password[3] == 16)
+			  && (Password[3] == 16) 		//4
  8000572:	4b26      	ldr	r3, [pc, #152]	; (800060c <main+0x134>)
  8000574:	88db      	ldrh	r3, [r3, #6]
  8000576:	2b10      	cmp	r3, #16
  8000578:	d12c      	bne.n	80005d4 <main+0xfc>
-			  && (Password[4] == 4096)
+			  && (Password[4] == 4096) 		//0
  800057a:	4b24      	ldr	r3, [pc, #144]	; (800060c <main+0x134>)
  800057c:	891b      	ldrh	r3, [r3, #8]
  800057e:	f5b3 5f80 	cmp.w	r3, #4096	; 0x1000
  8000582:	d127      	bne.n	80005d4 <main+0xfc>
-			  && (Password[5] == 32)
+			  && (Password[5] == 32) 		//5
  8000584:	4b21      	ldr	r3, [pc, #132]	; (800060c <main+0x134>)
  8000586:	895b      	ldrh	r3, [r3, #10]
  8000588:	2b20      	cmp	r3, #32
  800058a:	d123      	bne.n	80005d4 <main+0xfc>
-			  && (Password[6] == 4096)
+			  && (Password[6] == 4096) 		//0
  800058c:	4b1f      	ldr	r3, [pc, #124]	; (800060c <main+0x134>)
  800058e:	899b      	ldrh	r3, [r3, #12]
  8000590:	f5b3 5f80 	cmp.w	r3, #4096	; 0x1000
  8000594:	d11e      	bne.n	80005d4 <main+0xfc>
-			  && (Password[7] == 4096)
+			  && (Password[7] == 4096) 		//0
  8000596:	4b1d      	ldr	r3, [pc, #116]	; (800060c <main+0x134>)
  8000598:	89db      	ldrh	r3, [r3, #14]
  800059a:	f5b3 5f80 	cmp.w	r3, #4096	; 0x1000
  800059e:	d119      	bne.n	80005d4 <main+0xfc>
-			  && (Password[8] == 4096)
+			  && (Password[8] == 4096) 		//0
  80005a0:	4b1a      	ldr	r3, [pc, #104]	; (800060c <main+0x134>)
  80005a2:	8a1b      	ldrh	r3, [r3, #16]
  80005a4:	f5b3 5f80 	cmp.w	r3, #4096	; 0x1000
  80005a8:	d114      	bne.n	80005d4 <main+0xfc>
-			  && (Password[9] == 512)
+			  && (Password[9] == 512) 		//2
  80005aa:	4b18      	ldr	r3, [pc, #96]	; (800060c <main+0x134>)
  80005ac:	8a5b      	ldrh	r3, [r3, #18]
  80005ae:	f5b3 7f00 	cmp.w	r3, #512	; 0x200
  80005b2:	d10f      	bne.n	80005d4 <main+0xfc>
-			  && (Password[10] == 2)
+			  && (Password[10] == 2) 		//8
  80005b4:	4b15      	ldr	r3, [pc, #84]	; (800060c <main+0x134>)
  80005b6:	8a9b      	ldrh	r3, [r3, #20]
  80005b8:	2b02      	cmp	r3, #2
  80005ba:	d10b      	bne.n	80005d4 <main+0xfc>
-			  && (Password[11] == 32768)
+			  && (Password[11] == 32768) 	//Press Okay
  80005bc:	4b13      	ldr	r3, [pc, #76]	; (800060c <main+0x134>)
  80005be:	8adb      	ldrh	r3, [r3, #22]
  80005c0:	f5b3 4f00 	cmp.w	r3, #32768	; 0x8000
  80005c4:	d106      	bne.n	80005d4 <main+0xfc>
-			  && (test == 12))
+			  && (trick == 12)) 			//in trick 12
  80005c6:	4b10      	ldr	r3, [pc, #64]	; (8000608 <main+0x130>)
  80005c8:	781b      	ldrb	r3, [r3, #0]
  80005ca:	2b0c      	cmp	r3, #12
@@ -539,7 +538,7 @@ int main(void)
  80005d2:	701a      	strb	r2, [r3, #0]
 	  }
 
-	  if (LED_On == 1)
+	  if (LED_On == 1)	//Run LED
  80005d4:	4b0e      	ldr	r3, [pc, #56]	; (8000610 <main+0x138>)
  80005d6:	781b      	ldrb	r3, [r3, #0]
  80005d8:	2b01      	cmp	r3, #1

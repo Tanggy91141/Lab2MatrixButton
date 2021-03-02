@@ -46,8 +46,6 @@ UART_HandleTypeDef huart2;
 //save Value of Button
 uint16_t ButtonMatrixValue = 0;
 
-//uint16_t ButtonMatrixValue = 0;
-
 //State of ButtonMatrix
 uint16_t ButtonMatrixState[2] = {0};
 
@@ -60,11 +58,8 @@ uint8_t LED_On = 0;
 //Password
 uint16_t Password[12] = {1};
 
-//
-//uint8_t trick = 0;
-
 //number of Trick
-uint8_t test =0;
+uint8_t trick =0;
 
 /* USER CODE END PV */
 
@@ -130,50 +125,42 @@ int main(void)
 	  if ((ButtonMatrixState[1] != 0) && (ButtonMatrixState[0] == 0))
 	  {
 		  //trick = 1 ;
-		  test = test+1 ; //Trick + 1
+		  trick = trick+1 ; //Trick + 1
 	  }
-//	  else
-//	  {
-//		  trick = 0;
-//	  }
 
-//	  if ((test >= 12) && (trick == 1))
-//	  {
-//		  Password[test-1] = ButtonMatrixValue ;
-//	  }
-
-	  //Clear
-	  if (ButtonMatrixValue == 8)
+	  //Button trick
+	  if (ButtonMatrixValue == 8)	//Clear Button is tricking
 	  {
-		  test = 0 ;
+		  trick = 0 ;
 		  Password[0] = 0 ;
 		  Password[11] = 0 ;
 		  LED_On = 0;
 	  }
-	  else if ((ButtonMatrixValue != 0) && (test <= 12))
+	  //Not Clear Button is tricking and trick = 12
+	  else if ((ButtonMatrixValue != 0) && (trick <= 12))
 	  {
-		  Password[test-1] = ButtonMatrixValue ;
+		  Password[trick-1] = ButtonMatrixValue ;
 	  }
 
 	  //Check 62340500028ok in 12 Trick
-	  if ((Password[0] == 64)
-			  && (Password[1] == 512)
-			  && (Password[2] == 1024)
-			  && (Password[3] == 16)
-			  && (Password[4] == 4096)
-			  && (Password[5] == 32)
-			  && (Password[6] == 4096)
-			  && (Password[7] == 4096)
-			  && (Password[8] == 4096)
-			  && (Password[9] == 512)
-			  && (Password[10] == 2)
-			  && (Password[11] == 32768)
-			  && (test == 12))
+	  if ((Password[0] == 64)				//6
+			  && (Password[1] == 512) 		//2
+			  && (Password[2] == 1024) 		//3
+			  && (Password[3] == 16) 		//4
+			  && (Password[4] == 4096) 		//0
+			  && (Password[5] == 32) 		//5
+			  && (Password[6] == 4096) 		//0
+			  && (Password[7] == 4096) 		//0
+			  && (Password[8] == 4096) 		//0
+			  && (Password[9] == 512) 		//2
+			  && (Password[10] == 2) 		//8
+			  && (Password[11] == 32768) 	//Press Okay
+			  && (trick == 12)) 			//in trick 12
 	  {
 		  LED_On = 1 ;
 	  }
 
-	  if (LED_On == 1)
+	  if (LED_On == 1)	//Run LED
 	  {
 		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 	  }
@@ -183,7 +170,6 @@ int main(void)
 	  }
 
 	  ButtonMatrixState[0] = ButtonMatrixState[1] ;
-
 
   }
   /* USER CODE END 3 */
