@@ -46,6 +46,8 @@ UART_HandleTypeDef huart2;
 //save Value of Button
 uint16_t ButtonMatrixValue = 0;
 
+//uint16_t ButtonMatrixValue = 0;
+
 //State of ButtonMatrix
 uint16_t ButtonMatrixState[2] = {0};
 
@@ -59,7 +61,7 @@ uint8_t LED_On = 0;
 uint16_t Password[12] = {1};
 
 //
-//uint8_t PasswordState = 0 ;
+uint8_t trick = 0;
 
 //number of Trick
 uint8_t test =0;
@@ -126,13 +128,18 @@ int main(void)
 	  //Trick
 	  if ((ButtonMatrixState[1] != 0) && (ButtonMatrixState[0] == 0))
 	  {
-		  if (test >= 12)
-		  {
-			  Password[test] = ButtonMatrixValue ;
-		  }
-
+		  //trick = 1 ;
 		  test = test+1 ; //Trick + 1
 	  }
+//	  else
+//	  {
+//		  trick = 0;
+//	  }
+
+//	  if ((test >= 12) && (trick == 1))
+//	  {
+//		  Password[test-1] = ButtonMatrixValue ;
+//	  }
 
 	  //Clear
 	  if (ButtonMatrixValue == 8)
@@ -140,6 +147,10 @@ int main(void)
 		  test = -1 ;
 		  Password[0] = 0 ;
 		  Password[11] = 0 ;
+	  }
+	  else if ((ButtonMatrixValue != 0) && (test <= 12))
+	  {
+		  Password[test] = ButtonMatrixValue ;
 	  }
 
 	  //Check 62340500028ok in 12 Trick
